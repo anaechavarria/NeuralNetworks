@@ -69,14 +69,14 @@ classdef Network < handle
             max_neurons = max(network.neurons_on_layer);
             
             % print_weights(network);
+                            
+            % in_layer(p, i, k) Input of nueron i of layer k when fed with input p
+            in_layer  = zeros(input_size(1), max_neurons, network.num_layers);
+            % out_layer(p, i, k) Output of nueron i of layer k when fed with input p
+            out_layer = zeros(input_size(1), max_neurons, network.num_layers);
             
             for p = 1 : input_size(1)                
                 ... fprintf('Feeding input case %d\n', p);
-                
-                % in_layer(p, i, k) Input of nueron i of layer k when fed with input p
-                in_layer  = zeros(input_size(1), max_neurons, network.num_layers);
-                % out_layer(p, i, k) Output of nueron i of layer k when fed with input p
-                out_layer = zeros(input_size(1), max_neurons, network.num_layers);
 
                 % Compute output for input layer (layer 1)
                 for i = 1 : network.neurons_on_layer(1)                    
@@ -104,16 +104,17 @@ classdef Network < handle
                     ... fprintf('\n');
                 end 
             end
-            output = out_layer(:, :, network.num_layers);
-            assert(max(size(output) == [input_size(1) network.num_outputs]) == 1);
+            
+            output = out_layer(1 : input_size(1) , 1 : network.num_outputs , network.num_layers);
+            assert(min(size(output) == [input_size(1) network.num_outputs]) == 1);
         end        
         
         % Update network weights according to data on delta_w 
         function update_weights(network, delta_w)
             assert(max(size(delta_w) == size(network.weights)) == 1);
-            print_weights(network);
+            % print_weights(network);
             network.weights = network.weights + delta_w;
-            print_weights(network);
+            % print_weights(network);
         end
         
         % Reset network weights to random

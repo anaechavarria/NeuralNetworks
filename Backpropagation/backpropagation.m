@@ -34,22 +34,32 @@ network = Network(num_inputs,num_outputs, num_hidden_layers, neurons_on_layer, f
 % Chose trainig data form input
 num_cases = size_input(1);
 num_training_cases = ceil(0.6 * num_cases);
-permutation = randperm(num_cases)';
+num_validation_cases = ceil(0.2 * num_cases);
 training_input_data = zeros(num_training_cases, num_inputs);
 training_output_data = zeros(num_training_cases, num_outputs);
+validation_input_data = zeros(num_validation_cases, num_inputs);
+validation_output_data = zeros(num_validation_cases, num_outputs);
+
+permutation = randperm(num_cases)';
 
 for i = 1 : num_training_cases
     chosen_index = permutation(i);
     ... fprintf('Element %d chosen for training\n', chosen_index);
     training_input_data(i, :) = inputs(chosen_index, :);
-    training_output_data(i, :) = outputs(chosen_index, :);
+    training_output_data(i, :) = outputs(chosen_index, :); 
 end
 
+for i = 1 : num_validation_cases
+    chosen_index = permutation(num_training_cases + i);
+    ... fprintf('Element %d chosen for validation\n', chosen_index);
+    validation_input_data(i, :) = inputs(chosen_index, :);
+    validation_output_data(i, :) = outputs(chosen_index, :); 
+end
+
+% Perform backpropagation with training data
 average_error = 100 * ones(max_iterations, 1);
 iterations_made = 0;
-for n = 1 : max_iterations
-    if (average_error(n) < 1e-3), break; end
-    
+for n = 1 : max_iterations    
     [test_output, out_layer, in_layer] = feed(network, training_input_data);
     size_out_layer = size(out_layer);
     size_in_layer = size(in_layer);
@@ -65,14 +75,17 @@ for n = 1 : max_iterations
     for p = 1 : num_training_cases
         sq_sum = 0;
         for i = 1 : num_outputs
-            local_error_on_case(p, i) = outputs(p, i) - test_output(p, i);
+            local_error_on_case(p, i) = training_output_data(p, i) - test_output(p, i);
             sq_sum = sq_sum + (local_error_on_case(p, i)) ^ 2;
         end
         error_on_case(p) = 0.5 * sq_sum;
         average_error(n) = average_error(n) + error_on_case(p);
     end
     average_error(n) = average_error(n) / num_training_cases;
-    fprintf('On iteration %d average error is %d\n', n, average_error(n));
+    ... fprintf('On iteration %d average error is %e\n', n, average_error(n));
+        
+    iterations_made = n;
+    if (average_error(n) <= 1e-3), break; end
         
     % delta(p, i, k) = local gradient of neuron i of layer k when fed with input
     % case p
@@ -109,10 +122,83 @@ for n = 1 : max_iterations
     end
     
     update_weights(network, delta_w);    
-    
-    iterations_made = n;
+end
+fprintf('Average error on training data afeter last iteration is %e\n', average_error(iterations_made));
+
+% Feed network with validation data
+validation_output = feed(network, validation_input_data);
+val_average_error = 0;
+for p = 1 : num_validation_cases
+    sq_sum = 0;
+    for i = 1 : num_outputs
+        sq_sum = sq_sum + (validation_output_data(p, i) - validation_output(p, i)) ^ 2;
+    end
+    val_average_error = val_average_error + 0.5 * sq_sum;
+end
+val_average_error = val_average_error / num_validation_cases;
+fprintf('Average error on validation data is %e\n', val_average_error);
+
+% Feed network with complete data
+total_output = feed(network, inputs);
+total_average_error = 0;
+for p = 1 : num_cases
+    sq_sum = 0;
+    for i = 1 : num_outputs
+        sq_sum = sq_sum + (outputs(p, i) - total_output(p, i)) ^ 2;
+    end
+    total_average_error = total_average_error + 0.5 * sq_sum;
+end
+total_average_error =total_average_error / num_cases;
+fprintf('Average error on total data is %e\n', total_average_error);
+
+
+% Plot average error
+subplot(4, num_outputs, 1 : num_outputs);
+plot(average_error(1 : iterations_made));
+xlabel('Iteration');
+ylabel('Error');
+title('Average Error');
+
+% Plot training results
+for j = 1 : num_outputs
+    subplot(4, num_outputs, num_outputs + j);
+
+    X = (permutation(1 : num_training_cases))';
+    scatter(X, test_output(:, j), 5, 'r');
+    hold 'on'
+    scatter(X, training_output_data(:, j) , 5, 'b');
+    hold 'off'
+    xlabel('Input');
+    ylabel(sprintf('Output %d', j));
+    title('Results on training data');
 end
 
-plot(average_error(1 : iterations_made));
+% Plot validation results
+for j = 1 : num_outputs
+    subplot(4, num_outputs, 2 * num_outputs + j);
+
+    X = (permutation(num_training_cases + 1: num_training_cases + num_validation_cases))';
+    scatter(X, validation_output(:, j), 5, 'r');
+    hold 'on'
+    scatter(X, validation_output_data(:, j) , 5, 'b');
+    hold 'off'
+    xlabel('Input');
+    ylabel(sprintf('Output %d', j));
+    title('Results on validation data');
+end
+
+% Plot total results
+for j = 1 : num_outputs
+    subplot(4, num_outputs, 3 * num_outputs + j);
+
+    X = (1: num_cases)';
+    scatter(X, total_output(:, j), 5, 'r');
+    hold 'on'
+    scatter(X, outputs(:, j) , 5, 'b');
+    hold 'off'
+    xlabel('Input');
+    ylabel(sprintf('Output %d', j));
+    title('Results on total data');
+end
 
 end
