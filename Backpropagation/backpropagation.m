@@ -1,8 +1,25 @@
 % Create and train a neural network using the backpropagation algorithm
+% * num_inputs = number of input variables
+% * num_outputs = number of output variables
+% * num_hidden_layers = number of hidden layers of the network
+% * neurons_on_hidden_layer = a [number_hidden_layers x 1] array with the number
+%                             of neurons on each hidden layer
+% * function_on_layer = a [num_hidden_layers + 2 x 1] array of objects of the
+%                       class ActivationFunction with the activation function of
+%                       each layer
+% * inputs = a [p x num_inputs] array with the input variables for the p test
+%            cases
+% * outputs = a [p x num_outputs] array with the output variables for the p test
+%             cases
+% * max_iterations = the maximum number of iteratios for the backpropagation
+%                    algorithm
+% * learning_rate = the learning rate of the network when changing its weights
+% * desired_error = the desired error for the output of the training data
 
 function network = backpropagation(num_inputs,num_outputs, num_hidden_layers, ...
                                    neurons_on_hidden_layer, function_on_layer, ...
-                                   inputs, outputs, max_iterations, learning_rate)
+                                   inputs, outputs, max_iterations,  ...
+                                   learning_rate, desired_error)
 
 num_layers = num_hidden_layers + 2;
 
@@ -85,7 +102,7 @@ for n = 1 : max_iterations
     ... fprintf('On iteration %d average error is %e\n', n, average_error(n));
         
     iterations_made = n;
-    if (average_error(n) <= 1e-3), break; end
+    if (average_error(n) <= desired_error), break; end
         
     % delta(p, i, k) = local gradient of neuron i of layer k when fed with input
     % case p
@@ -116,7 +133,7 @@ for n = 1 : max_iterations
                for p = 1 : num_training_cases
                    delta_w(i, j, k) = delta_w(i, j, k) + delta(p, j, k + 1) * out_layer(p, i, k);
                end
-               delta_w(i, j, k) = delta_w(i, j, k) * (learning_rate / num_training_cases);
+               delta_w(i, j, k) = delta_w(i, j, k) * (learning_rate  / num_training_cases);
            end
        end
     end

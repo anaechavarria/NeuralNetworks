@@ -1,8 +1,11 @@
 classdef Network < handle
     % Network: creates and operates on neural networks
-
-    %
-    %   Asdf
+    %   Methods in thid function are:
+    %   * Network = class constructor
+    %   * feed = output when feeding network with a given set of inputs
+    %   * uptade_weights = update network weights given a weight chage matrix
+    %   * reset_weights = reset network weights to random numbers
+    %   * print_weights = print network weights in a detailed manner
     
     properties (SetAccess = private)
         % Number of inputs of the network
