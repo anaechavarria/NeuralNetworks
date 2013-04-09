@@ -26,6 +26,7 @@ num_cases = input_size(1);
 num_hidden_layers = input('Input the number of hidden layers: ');
 neurons_on_hidden_layer = input('Input a column array with the number of neurons on each hidden layer: ');
 
+
 % Input activation functions
 for k = 1 : num_hidden_layers + 2
     function_on_layer(k, 1) = ActivationFunction(k);
@@ -76,6 +77,4 @@ clear p min_input max_input min_output max_output input_size output_size
 
 %% Run backpropagation
 
-network = backpropagation(num_inputs,num_outputs, num_hidden_layers, ...
-                          neurons_on_hidden_layer, function_on_layer, normalized_inputs,...
-                          normalized_outputs, max_iterations, learning_rate, desired_error)
+network = backpropagation(num_inputs,num_outputs, num_hidden_layers, neurons_on_hidden_layer, function_on_layer, normalized_inputs, normalized_outputs, max_iterations, learning_rate, desired_error)

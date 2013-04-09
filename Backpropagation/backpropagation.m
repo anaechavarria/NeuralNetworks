@@ -139,6 +139,8 @@ for n = 1 : max_iterations
     end
     
     update_weights(network, delta_w);    
+    fprintf('On iteration %d weights are:\n', n);
+    print_weights(network);
 end
 fprintf('Average error on training data afeter last iteration is %e\n', average_error(iterations_made));
 
@@ -189,7 +191,8 @@ for j = 1 : num_outputs
     ylabel(sprintf('Output %d', j));
     title('Results on training data');
 end
-
+training_output_data
+test_output
 % Plot validation results
 for j = 1 : num_outputs
     subplot(4, num_outputs, 2 * num_outputs + j);
