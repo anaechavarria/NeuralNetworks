@@ -6,13 +6,15 @@ classdef ActivationFunction
     %   asks for the functions parameters. The result is the function and its
     %   derivative in the inline format.
     
+    % Copyrights Ana Echavarria (anaechavarriau@gmail.com)
+    
     properties
         f;
         df;
     end
     
     methods
-        function fun = ActivationFunction(layer)
+        function fun = ActivationFunction(layer)            
             msg = sprintf('Insert function type for layer %d.\n(1 = linear, 2 = log-sigmoid, 3 = tan-sigmoid) ', layer);
             type = input(msg);
             while (type ~= 1 && type ~= 2 && type ~= 3)
@@ -63,7 +65,7 @@ classdef ActivationFunction
                 otherwise
                     assert(false);
             end
-        end
+        end        
     end
 end
 

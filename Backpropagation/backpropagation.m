@@ -16,6 +16,8 @@
 % * learning_rate = the learning rate of the network when changing its weights
 % * desired_error = the desired error for the output of the training data
 
+% Copyrights Ana Echavarria (anaechavarriau@gmail.com)
+
 function network = backpropagation(num_inputs,num_outputs, num_hidden_layers, ...
                                    neurons_on_hidden_layer, function_on_layer, ...
                                    inputs, outputs, max_iterations,  ...
@@ -99,7 +101,7 @@ for n = 1 : max_iterations
         average_error(n) = average_error(n) + error_on_case(p);
     end
     average_error(n) = average_error(n) / num_training_cases;
-    ... fprintf('On iteration %d average error is %e\n', n, average_error(n));
+    fprintf('On iteration %d average error is %e\n', n, average_error(n));
         
     iterations_made = n;
     if (average_error(n) <= desired_error), break; end
@@ -139,10 +141,10 @@ for n = 1 : max_iterations
     end
     
     update_weights(network, delta_w);    
-    fprintf('On iteration %d weights are:\n', n);
-    print_weights(network);
+%     fprintf('On iteration %d weights are:\n', n);
+%     print_weights(network);
 end
-fprintf('Average error on training data afeter last iteration is %e\n', average_error(iterations_made));
+fprintf('\nAverage error on training data after last iteration is %e\n', average_error(iterations_made));
 
 % Feed network with validation data
 validation_output = feed(network, validation_input_data);
@@ -191,8 +193,7 @@ for j = 1 : num_outputs
     ylabel(sprintf('Output %d', j));
     title('Results on training data');
 end
-training_output_data
-test_output
+
 % Plot validation results
 for j = 1 : num_outputs
     subplot(4, num_outputs, 2 * num_outputs + j);

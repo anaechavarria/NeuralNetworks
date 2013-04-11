@@ -7,6 +7,8 @@ classdef Network < handle
     %   * reset_weights = reset network weights to random numbers
     %   * print_weights = print network weights in a detailed manner
     
+    % Copyrights Ana Echavarria (anaechavarriau@gmail.com)
+    
     properties (SetAccess = private)
         % Number of inputs of the network
         num_inputs;

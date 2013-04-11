@@ -3,6 +3,8 @@
 % same number of rows (number of test cases) and a column for each input/output
 % variable
 
+% Copyrights Ana Echavarria (anaechavarriau@gmail.com)
+
 %% Read data
 file_name = 'TestData.mat';
 Data = load('-mat', file_name);
